@@ -7,7 +7,7 @@ if (!serverUrl) {
 }
 
 const client = new ApolloClient({
-  uri: serverUrl + "/graphql",
+  uri: "http://" + serverUrl + "/graphql",
   cache: new InMemoryCache(),
 });
 
