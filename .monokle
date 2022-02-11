@@ -1,0 +1,25 @@
+{
+    "scanExcludes": [
+        "node_modules",
+        "**/.git",
+        "**/pkg/mod/**",
+        "**/.kube",
+        "**/*.swp",
+        ".monokle"
+    ],
+    "fileIncludes": [
+        "*.yaml",
+        "*.yml"
+    ],
+    "folderReadsMaxDepth": 10,
+    "settings": {
+        "helmPreviewMode": "template",
+        "kustomizeCommand": "kubectl",
+        "createDefaultObjects": false,
+        "setDefaultPrimitiveValues": true
+    },
+    "kubeConfig": {
+        "path": "/Users/abdallahabedraba/.kube/config",
+        "currentContext": "minikube"
+    }
+}
