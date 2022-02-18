@@ -1,6 +1,6 @@
 {
     "scanExcludes": [
-        "node_modules",
+        "**/node_modules",
         "**/.git",
         "**/pkg/mod/**",
         "**/.kube",
