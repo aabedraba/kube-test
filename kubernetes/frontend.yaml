@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -14,10 +15,10 @@ spec:
       containers:
         - name: frontend
           image: aabedraba/kube-test-frontend
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           resources:
             limits:
-              memory: "128Mi"
+              memory: "256Mi"
               cpu: "500m"
           ports:
             - containerPort: 3000
@@ -39,13 +40,12 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend
+  name: frontend-ingress
   labels:
-    name: frontend
+    name: frontend-ingress
 spec:
   rules:
-    - host: local.com
-      http:
+    - http:
         paths:
           - pathType: Prefix
             path: "/"
