@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: aabedraba/kube-test-backend:v0.4
+          image: aabedraba/kube-test-backend:v0.4-arm64
           imagePullPolicy: Always
           resources:
             limits:
@@ -62,7 +62,7 @@ spec:
   - http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/graphql"
         backend:
           service:
             name: backend-service
