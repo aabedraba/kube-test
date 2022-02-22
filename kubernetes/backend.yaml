@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: backend
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -13,8 +14,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: aabedraba/kube-test-backend
-          imagePullPolicy: Never
+          image: aabedraba/kube-test-backend:v0.4
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "256Mi"
@@ -58,8 +59,7 @@ metadata:
     name: backend-ingress
 spec:
   rules:
-  - host: api.local.com
-    http:
+  - http:
       paths:
       - pathType: Prefix
         path: "/"

@@ -17,6 +17,11 @@ async function startServer(typeDefs: any, resolvers: any) {
   });
 
   const port = process.env.PORT || 8000;
+
+  app.get("/", (req, res) => {
+    return res.send("OK");
+  });
+
   app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
   });
