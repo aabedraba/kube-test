@@ -1,83 +1,79 @@
 {
-	"info": {
-		"_postman_id": "40023de2-d07b-4b67-b1fc-5bb3ebd1e5d1",
-		"name": "Kubeshop",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Frontend",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.status == 200);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://10.104.171.93:3000",
-					"protocol": "http",
-					"host": [
-						"10",
-						"104",
-						"171",
-						"93"
-					],
-					"port": "3000"
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Graphql",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "graphql",
-					"graphql": {
-						"query": "query Hello {\n    hello\n}",
-						"variables": ""
-					}
-				},
-				"url": {
-					"raw": "http://10.103.236.253:8000/graphql",
-					"protocol": "http",
-					"host": [
-						"10",
-						"103",
-						"236",
-						"253"
-					],
-					"port": "8000",
-					"path": [
-						"graphql"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "998e5383-a114-4828-9d50-8966442b104e",
+    "name": "Kubeshop",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Frontend",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Body matches string\", function () {",
+              "    pm.expect(pm.response.status == 200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://frontend-service.default:3000",
+          "protocol": "http",
+          "host": [
+            "frontend-service",
+            "default"
+          ],
+          "port": "3000"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Graphql",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query Hello {\n    hello\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "http://backend-service.default:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "backend-service",
+            "default"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
 }
