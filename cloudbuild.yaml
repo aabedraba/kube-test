@@ -1,0 +1,37 @@
+steps:
+  - name: "gcr.io/cloud-builder/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA",
+        "backend",
+      ]
+  - name: "gcr.io/cloud-builder/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA",
+        "frontend",
+      ]
+  - name: "gcr.io/cloud-builder/docker"
+    args:
+      [
+        "push",
+        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA",
+      ]
+  - name: "gcr.io/cloud-builder/docker"
+    args:
+      [
+        "push",
+        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA",
+      ]
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      [
+        "run",
+        "--filename=kubernetes",
+        "--location=asia-south1-docker",
+        "--cluster=$PROJECT_ID-gke",
+      ]
