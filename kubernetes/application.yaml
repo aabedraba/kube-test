@@ -13,7 +13,6 @@ spec:
       images:
         - "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:60f0083"
         - "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:60f0083"
-
   destination:
     server: https://kubernetes.default.svc
     namespace: default

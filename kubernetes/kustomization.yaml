@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - "backend.yaml"
   - "frontend.yaml"
+  - "application.yaml"
 
 images:
   - name: backend-image
