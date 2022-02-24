@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: aabedraba/kube-test-frontend
+          image: frontend-image
           imagePullPolicy: Always
           resources:
             limits:

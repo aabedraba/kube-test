@@ -27,11 +27,20 @@ steps:
         "push",
         "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA",
       ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - '-c'
+      - |
+        sed -i "s/SHORT_SHA/$SHORT_SHA/g" kubernetes/kustomization.yaml
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    entrypoint: "kustomize"
+    args: ["build", "kubernetes", "-o", "output-manifest.yaml"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       [
         "run",
-        "--filename=kubernetes",
+        "--filename=output-manifest.yaml",
         "--location=asia-south1",
         "--cluster=$PROJECT_ID-gke",
       ]

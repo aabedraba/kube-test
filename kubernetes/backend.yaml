@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: aabedraba/kube-test-backend:v0.4-arm64
+          image: backend-image
           imagePullPolicy: Always
           resources:
             limits:
