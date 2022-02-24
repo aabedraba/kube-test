@@ -1,28 +1,32 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
+    id: Build backend
     args:
       [
         "build",
         "-t",
-        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA",
+        "asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/backend:$SHORT_SHA",
         "backend",
       ]
   - name: "gcr.io/cloud-builders/docker"
+    id: Build frontend
     args:
       [
         "build",
         "-t",
-        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA",
+        "asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/frontend:$SHORT_SHA",
         "frontend",
       ]
   - name: "gcr.io/cloud-builders/docker"
+    id: Push images to container registry
     entrypoint: bash
     args:
       - "-c"
       - |
-        docker push asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA
-        docker push asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA
+        docker push asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/backend:$SHORT_SHA
+        docker push asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/frontend:$SHORT_SHA
   - name: "gcr.io/cloud-builders/gcloud"
+    id: Update kustomize templates and create output yaml
     entrypoint: "bash"
     args:
       - "-c"
@@ -30,6 +34,7 @@ steps:
         sed -i "s/SHORT_SHA/$SHORT_SHA/g" kubernetes/kustomization.yaml
         kustomize build kubernetes -o output-manifest.yaml
   - name: "gcr.io/cloud-builders/kubectl"
+    id: Create argoCD components
     env:
       - "CLOUDSDK_COMPUTE_ZONE=asia-south1"
       - "CLOUDSDK_CONTAINER_CLUSTER=$PROJECT_ID-gke"
@@ -42,6 +47,7 @@ steps:
         | grep -v creationTimestamp | kubectl apply -f -
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   - name: "gcr.io/cloud-builders/gke-deploy"
+    id: Deploy images
     args:
       [
         "apply",
