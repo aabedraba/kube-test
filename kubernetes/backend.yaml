@@ -59,12 +59,12 @@ metadata:
     name: backend-ingress
 spec:
   rules:
-  - http:
-      paths:
-      - pathType: Prefix
-        path: "/graphql"
-        backend:
-          service:
-            name: backend-service
-            port: 
-              number: 8000
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/graphql"
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
