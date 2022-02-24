@@ -16,30 +16,35 @@ steps:
         "frontend",
       ]
   - name: "gcr.io/cloud-builders/docker"
+    entrypoint: bash
     args:
-      [
-        "push",
-        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA",
-      ]
+      - "-c"
+      - |
+        docker push asia-south1-docker.pkg.dev/aabedraba-com/kube-test/backend:$SHORT_SHA
+        docker push asia-south1-docker.pkg.dev/aabedraba-com/kube-test/frontend:$SHORT_SHA
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
-      - '-c'
+      - "-c"
       - |
         sed -i "s/SHORT_SHA/$SHORT_SHA/g" kubernetes/kustomization.yaml
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    entrypoint: "kustomize"
-    args: ["build", "kubernetes", "-o", "output-manifest.yaml"]
+        kustomize build kubernetes -o output-manifest.yaml
+  - name: "gcr.io/cloud-builders/kubectl"
+    env:
+      - "CLOUDSDK_COMPUTE_ZONE=asia-south1"
+      - "CLOUDSDK_CONTAINER_CLUSTER=$PROJECT_ID-gke"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud container clusters get-credentials --zone "asia-south1" "$PROJECT_ID-gke"
+        kubectl create namespace argocd --dry-run=client -o yaml \
+        | grep -v creationTimestamp | kubectl apply -f -
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       [
-        "run",
+        "apply",
         "--filename=output-manifest.yaml",
         "--location=asia-south1",
         "--cluster=$PROJECT_ID-gke",
