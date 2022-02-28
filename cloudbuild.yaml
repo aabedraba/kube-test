@@ -31,14 +31,12 @@ steps:
     args:
       - "-c"
       - |
-        sed -i "s/SHORT_SHA/$SHORT_SHA/g" kubernetes/kustomization.yaml
-        sed -i "s/PROJECT_ID/$PROJECT_ID/g" kubernetes/kustomization.yaml
-        kustomize build kubernetes -o output-manifest.yaml
+        git clone --depth 1 https://github.com/aabedraba/kube-test-devops
+        sed -i "s/SHORT_SHA/$SHORT_SHA/g" kube-test-devops/kubernetes/kustomization.yaml
+        sed -i "s/PROJECT_ID/$PROJECT_ID/g" kube-test-devops/kubernetes/kustomization.yaml
+        kustomize build kube-test-devops/kubernetes -o output-manifest.yaml
   - name: "gcr.io/cloud-builders/kubectl"
     id: Create argoCD components
-    env:
-      - "CLOUDSDK_COMPUTE_ZONE=asia-south1"
-      - "CLOUDSDK_CONTAINER_CLUSTER=$PROJECT_ID-gke"
     entrypoint: bash
     args:
       - -c
