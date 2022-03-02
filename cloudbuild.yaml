@@ -1,6 +1,6 @@
 steps:
-  - name: "gcr.io/cloud-builders/docker"
-    id: Build backend
+  - id: Build backend
+    name: "gcr.io/cloud-builders/docker"
     args:
       [
         "build",
@@ -8,8 +8,9 @@ steps:
         "asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/backend:$SHORT_SHA",
         "backend",
       ]
-  - name: "gcr.io/cloud-builders/docker"
-    id: Build frontend
+
+  - id: Build frontend
+    name: "gcr.io/cloud-builders/docker"
     args:
       [
         "build",
@@ -17,11 +18,62 @@ steps:
         "asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/frontend:$SHORT_SHA",
         "frontend",
       ]
-  - name: "gcr.io/cloud-builders/docker"
-    id: Push images to container registry
+
+  - id: Push images to container registry
+    name: "gcr.io/cloud-builders/docker"
     entrypoint: bash
     args:
       - "-c"
       - |
         docker push asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/backend:$SHORT_SHA
         docker push asia-south1-docker.pkg.dev/$PROJECT_ID/kube-test/frontend:$SHORT_SHA
+
+  - id: Get github ssh-key from secrets manager
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: "bash"
+    args:
+      [
+        "-c",
+        "gcloud secrets versions access latest --secret=github > /root/.ssh/id_github",
+      ]
+    volumes:
+      - name: "ssh"
+        path: /root/.ssh
+
+  - id: Set up git with key and domain
+    name: "gcr.io/cloud-builders/git"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        chmod 600 /root/.ssh/id_github
+        cat <<EOF >/root/.ssh/config
+        Hostname github.com
+        IdentityFile /root/.ssh/id_github
+        EOF
+        ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
+    volumes:
+      - name: "ssh"
+        path: /root/.ssh
+
+  - id: Update kustomize file and push to repo
+    name: gcr.io/cloud-builders/git
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        echo "Cloning repo ..."
+        git clone --depth 1 git@github.com:aabedraba/kube-test-devops.git
+        echo "Updating image tag version ..."
+        cd kube-test-devops
+        ls
+        sed -i "s|newTag: .*|newTag: $SHORT_SHA|" kubernetes/kustomization.yaml
+        echo "Pushing changes to git config repo ..."
+        git config --global user.name Abdallah
+        git config --global user.email aabedraba@gmail.com
+        git add -A
+        git commit -m "Updated with build ${BUILD_ID} from ${REPO_NAME} commit ${COMMIT_SHA}"
+        git push origin main
+    volumes:
+      - name: "ssh"
+        path: /root/.ssh
